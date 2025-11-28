@@ -97,7 +97,7 @@ void GUIMyFrame1::Repaint()
     WxPanel->Refresh();
 }
 
-void GUIMyFrame1::draw2DLine(wxPaintDC& dc, std::vector<Segment> data, double x1, double y1, double x2, double y2)
+void GUIMyFrame1::draw2DLine(wxPaintDC& dc, std::vector<Segment> data)
 {
     dc.SetBackground(*wxWHITE_BRUSH);
     dc.Clear();
@@ -149,6 +149,7 @@ void GUIMyFrame1::draw2DLine(wxPaintDC& dc, std::vector<Segment> data, double x1
 void GUIMyFrame1::OnPanelPaint(wxPaintEvent& event)
 {
     wxPaintDC dc(WxPanel);
+	
 
-	draw2DLine(dc, data, 0, 0, 100, 100);
+	draw2DLine(dc, data);
 }

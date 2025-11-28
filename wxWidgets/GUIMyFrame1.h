@@ -33,7 +33,7 @@ class GUIMyFrame1 : public MyFrame1
 	//// end generated class members
   void Repaint();
   void OnPanelPaint(wxPaintEvent& event);
-  void draw2DLine(wxPaintDC& dc, std::vector<Segment> data, double x1, double y1, double x2, double y2);
+  void draw2DLine(wxPaintDC& dc, std::vector<Segment> data);
 
 
 };
