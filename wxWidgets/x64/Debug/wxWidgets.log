@@ -1,0 +1,13 @@
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (wxWidgets.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  GUI.cpp
+  GUIMyFrame1.cpp
+C:\Users\rdiko\source\repos\InterfejsyProjekt\wxWidgets\GUIMyFrame1.cpp(48,52): warning C4100: 'event': unreferenced formal parameter
+C:\Users\rdiko\source\repos\InterfejsyProjekt\wxWidgets\GUIMyFrame1.cpp(53,64): warning C4100: 'event': unreferenced formal parameter
+C:\Users\rdiko\source\repos\InterfejsyProjekt\wxWidgets\GUIMyFrame1.cpp(76,50): warning C4100: 'event': unreferenced formal parameter
+C:\Users\rdiko\source\repos\InterfejsyProjekt\wxWidgets\GUIMyFrame1.cpp(100,46): warning C4100: 'event': unreferenced formal parameter
+  main.cpp
+  vecmat.cpp
+  Generating Code...
+  wxWidgets.vcxproj -> C:\Users\rdiko\source\repos\InterfejsyProjekt\x64\Debug\InterfejsyProjekt.exe
+  'pwsh.exe' is not recognized as an internal or external command,
+  operable program or batch file.

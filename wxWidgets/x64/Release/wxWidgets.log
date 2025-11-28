@@ -1,0 +1,2 @@
+﻿MSVCRT.lib(exe_winmain.obj) : error LNK2001: unresolved external symbol WinMain
+C:\Users\rdiko\source\repos\wxWidgets\x64\Release\wxWidgets.exe : fatal error LNK1120: 1 unresolved externals

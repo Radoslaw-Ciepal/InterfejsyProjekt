@@ -1,0 +1,4 @@
+C:\Users\rdiko\source\repos\wxWidgets\wxWidgets\x64\Release\wxWidgets.vcxproj.MdMergeInputs.cache
+C:\Users\rdiko\source\repos\wxWidgets\wxWidgets\x64\Release\wxWidgets.vcxproj.cppwinrt_plat.cache
+C:\Users\rdiko\source\repos\wxWidgets\wxWidgets\x64\Release\wxWidgets.vcxproj.cppwinrt_comp.cache
+C:\Users\rdiko\source\repos\wxWidgets\wxWidgets\x64\Release\wxWidgets.vcxproj.Up2Date
