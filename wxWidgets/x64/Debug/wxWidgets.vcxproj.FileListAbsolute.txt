@@ -10,3 +10,7 @@ C:\Users\rdiko\source\repos\InterfejsyProjekt\wxWidgets\x64\Debug\wxWidgets.vcxp
 C:\Users\rdiko\source\repos\InterfejsyProjekt\wxWidgets\x64\Debug\wxWidgets.vcxproj.cppwinrt_plat.cache
 C:\Users\rdiko\source\repos\InterfejsyProjekt\wxWidgets\x64\Debug\wxWidgets.vcxproj.cppwinrt_comp.cache
 C:\Users\rdiko\source\repos\InterfejsyProjekt\wxWidgets\x64\Debug\wxWidgets.vcxproj.Up2Date
+C:\Users\rdiko\source\repos\InterfejsyProjekt\InterfejsyProjekt\wxWidgets\x64\Debug\wxWidgets.vcxproj.MdMergeInputs.cache
+C:\Users\rdiko\source\repos\InterfejsyProjekt\InterfejsyProjekt\wxWidgets\x64\Debug\wxWidgets.vcxproj.cppwinrt_plat.cache
+C:\Users\rdiko\source\repos\InterfejsyProjekt\InterfejsyProjekt\wxWidgets\x64\Debug\wxWidgets.vcxproj.cppwinrt_comp.cache
+C:\Users\rdiko\source\repos\InterfejsyProjekt\InterfejsyProjekt\wxWidgets\x64\Debug\wxWidgets.vcxproj.Up2Date

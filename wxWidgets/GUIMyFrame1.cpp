@@ -97,10 +97,8 @@ void GUIMyFrame1::Repaint()
     WxPanel->Refresh();
 }
 
-void GUIMyFrame1::OnPanelPaint(wxPaintEvent& event)
+void GUIMyFrame1::draw2DLine(wxPaintDC& dc, std::vector<Segment> data, double x1, double y1, double x2, double y2)
 {
-    wxPaintDC dc(WxPanel);
-
     dc.SetBackground(*wxWHITE_BRUSH);
     dc.Clear();
 
@@ -108,9 +106,9 @@ void GUIMyFrame1::OnPanelPaint(wxPaintEvent& event)
 
     for (Segment s : data)
     {
-		Vector4 p1, p2;
-		p1.Set(s.begin.x, s.begin.y, s.begin.z);
-		p2.Set(s.end.x, s.end.y, s.end.z);
+        Vector4 p1, p2;
+        p1.Set(s.begin.x, s.begin.y, s.begin.z);
+        p2.Set(s.end.x, s.end.y, s.end.z);
 
         ////////
         Matrix4 mTranslate = Matrix4::Identity();
@@ -120,30 +118,37 @@ void GUIMyFrame1::OnPanelPaint(wxPaintEvent& event)
         Matrix4 mScale = Matrix4::Identity();
         Matrix4 mTransform = Matrix4::Identity();
 
-		mTranslate.data[0][3] = (WxSB_TranslationX->GetValue() - 100) / 50.0;
-		mTranslate.data[1][3] = (WxSB_TranslationY->GetValue() - 100) / 50.0;
-		mTranslate.data[2][3] = (WxSB_TranslationZ->GetValue() - 100) / 50.0;
-		double angleX = WxSB_RotateX->GetValue() * 3.14159265 / 180.0;
-		double angleY = WxSB_RotateY->GetValue() * 3.14159265 / 180.0;
-		double angleZ = WxSB_RotateZ->GetValue() * 3.14159265 / 180.0;
-		mRotateX.data[1][1] = cos(angleX); mRotateX.data[1][2] = -sin(angleX);
-		mRotateX.data[2][1] = sin(angleX); mRotateX.data[2][2] = cos(angleX);
-		mRotateY.data[0][0] = cos(angleY); mRotateY.data[0][2] = sin(angleY);
-		mRotateY.data[2][0] = -sin(angleY); mRotateY.data[2][2] = cos(angleY);
-		mRotateZ.data[0][0] = cos(angleZ); mRotateZ.data[0][1] = -sin(angleZ);
-		mRotateZ.data[1][0] = sin(angleZ); mRotateZ.data[1][1] = cos(angleZ);
-		mScale.data[0][0] = WxSB_ScaleX->GetValue() / 100.0;
-		mScale.data[1][1] = WxSB_ScaleY->GetValue() / 100.0;
-		mScale.data[2][2] = WxSB_ScaleZ->GetValue() / 100.0;
-		mTransform = mTranslate * mRotateZ * mRotateY * mRotateX * mScale;
-		p1 = mTransform * p1;
-		p2 = mTransform * p2;
-		///////
-		int x1_2D = static_cast<int>((p1.GetX() / (p1.GetZ() + 5.0)) * 200.0 + WxPanel->GetSize().GetWidth() / 2);
-		int y1_2D = static_cast<int>((p1.GetY() / (p1.GetZ() + 5.0)) * 200.0 + WxPanel->GetSize().GetHeight() / 2);
-		int x2_2D = static_cast<int>((p2.GetX() / (p2.GetZ() + 5.0)) * 200.0 + WxPanel->GetSize().GetWidth() / 2);
-		int y2_2D = static_cast<int>((p2.GetY() / (p2.GetZ() + 5.0)) * 200.0 + WxPanel->GetSize().GetHeight() / 2);
-		dc.SetPen(wxPen(wxColour(s.color.R, s.color.G, s.color.B)));
+        mTranslate.data[0][3] = (WxSB_TranslationX->GetValue() - 100) / 50.0;
+        mTranslate.data[1][3] = (WxSB_TranslationY->GetValue() - 100) / 50.0;
+        mTranslate.data[2][3] = (WxSB_TranslationZ->GetValue() - 100) / 50.0;
+        double angleX = WxSB_RotateX->GetValue() * 3.14159265 / 180.0;
+        double angleY = WxSB_RotateY->GetValue() * 3.14159265 / 180.0;
+        double angleZ = WxSB_RotateZ->GetValue() * 3.14159265 / 180.0;
+        mRotateX.data[1][1] = cos(angleX); mRotateX.data[1][2] = -sin(angleX);
+        mRotateX.data[2][1] = sin(angleX); mRotateX.data[2][2] = cos(angleX);
+        mRotateY.data[0][0] = cos(angleY); mRotateY.data[0][2] = sin(angleY);
+        mRotateY.data[2][0] = -sin(angleY); mRotateY.data[2][2] = cos(angleY);
+        mRotateZ.data[0][0] = cos(angleZ); mRotateZ.data[0][1] = -sin(angleZ);
+        mRotateZ.data[1][0] = sin(angleZ); mRotateZ.data[1][1] = cos(angleZ);
+        mScale.data[0][0] = WxSB_ScaleX->GetValue() / 100.0;
+        mScale.data[1][1] = WxSB_ScaleY->GetValue() / 100.0;
+        mScale.data[2][2] = WxSB_ScaleZ->GetValue() / 100.0;
+        mTransform = mTranslate * mRotateZ * mRotateY * mRotateX * mScale;
+        p1 = mTransform * p1;
+        p2 = mTransform * p2;
+        ///////
+        int x1_2D = static_cast<int>((p1.GetX() / (p1.GetZ() + 5.0)) * 200.0 + WxPanel->GetSize().GetWidth() / 2);
+        int y1_2D = static_cast<int>((p1.GetY() / (p1.GetZ() + 5.0)) * 200.0 + WxPanel->GetSize().GetHeight() / 2);
+        int x2_2D = static_cast<int>((p2.GetX() / (p2.GetZ() + 5.0)) * 200.0 + WxPanel->GetSize().GetWidth() / 2);
+        int y2_2D = static_cast<int>((p2.GetY() / (p2.GetZ() + 5.0)) * 200.0 + WxPanel->GetSize().GetHeight() / 2);
+        dc.SetPen(wxPen(wxColour(s.color.R, s.color.G, s.color.B)));
         dc.DrawLine(x1_2D, y1_2D, x2_2D, y2_2D);
     }
+}
+
+void GUIMyFrame1::OnPanelPaint(wxPaintEvent& event)
+{
+    wxPaintDC dc(WxPanel);
+
+	draw2DLine(dc, data, 0, 0, 100, 100);
 }
