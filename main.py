@@ -64,6 +64,7 @@ class GeoModel:
 model = GeoModel()
 model.loadFromFile("a10a_4.geo")
 
+
 class RenderingPane(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
@@ -73,75 +74,76 @@ class RenderingPane(QtWidgets.QWidget):
             QtWidgets.QSizePolicy.Policy.Expanding,
             QtWidgets.QSizePolicy.Policy.Expanding,
         )
-        self.setMode(0)
-
-    def setMode(self, mode):
+        self.k = 0.5
+        self.alpha = math.pi / 4
+        self.mode = 0
         self.projectionMatrix = QtGui.QMatrix4x4()
         self.modelViewMatrix = QtGui.QMatrix4x4()
-        def setOrho():
-            self.projectionMatrix.ortho(-2, 2, -2, 2, -2, 2)
 
-        if mode == 0:
+    def setMode(self, mode):
+        self.mode = mode
+
+    def aspectRatio(self):
+        return self.width() / self.height()
+
+    def calculateProjectionMatrix(self):
+        self.projectionMatrix.setToIdentity()
+        if self.mode == 0:
+            self.projectionMatrix.perspective(90, self.aspectRatio(), 0.1, 100)
+        elif self.mode in (1, 2, 3, 6):
+            self.projectionMatrix.ortho(
+                -2 * self.aspectRatio(), 2 * self.aspectRatio(), -2, 2, -2, 2
+            )
+        elif self.mode in (4, 5):
+            self.projectionMatrix.setColumn(
+                2,
+                QtGui.QVector4D(
+                    self.k * math.cos(self.alpha), self.k * math.sin(self.alpha), 0, 0
+                ),
+            )
+            temp = QtGui.QMatrix4x4()
+            temp.scale(0.5 / self.aspectRatio(), 0.5, 1)
+            self.projectionMatrix = temp * self.projectionMatrix
+            self.projectionMatrix.translate(0.5, 0.5, 0)
+
+    def calculateModelViewMatrix(self):
+        self.modelViewMatrix.setToIdentity()
+        if self.mode == 0:
             # perspektywa (1 punkt)
-            self.projectionMatrix.perspective(90, self.width() / self.height(), 0.1, 100)
             self.modelViewMatrix.lookAt(
                 QtGui.QVector3D(2, 2, 2),
                 QtGui.QVector3D(0, 0, 0),
                 QtGui.QVector3D(0, 0, -1),
             )
-        elif mode == 1:
+        elif self.mode == 1:
             # orto góra
-            setOrho()
             self.modelViewMatrix.lookAt(
                 QtGui.QVector3D(0, 0, 5),
                 QtGui.QVector3D(0, 0, 0),
                 QtGui.QVector3D(0, -1, 0),
             )
-        elif mode == 2:
+        elif self.mode == 2:
             # orto dół
-            setOrho()
             self.modelViewMatrix.lookAt(
                 QtGui.QVector3D(0, 0, -5),
                 QtGui.QVector3D(0, 0, 0),
                 QtGui.QVector3D(0, -1, 0),
             )
-        elif mode == 3:
+        elif self.mode == 3:
             # orto przód
-            setOrho()
             self.modelViewMatrix.lookAt(
                 QtGui.QVector3D(0, 5, 0),
                 QtGui.QVector3D(0, 0, 0),
                 QtGui.QVector3D(0, 0, -1),
             )
-        elif mode == 4:
-            # ukośny gabinetowy
-            k = 0.5
-            alpha = math.pi / 4
-            self.projectionMatrix.setColumn(
-                2, QtGui.QVector4D(k * math.cos(alpha), k * math.sin(alpha), 0, 0)
-            )
-            self.projectionMatrix.translate(0.5, 0.5, 0)
+        elif self.mode in (4, 5):
             self.modelViewMatrix.lookAt(
-                QtGui.QVector3D(1, 1, 0),
+                QtGui.QVector3D(0, 1, 0),
                 QtGui.QVector3D(0, 0, 0),
                 QtGui.QVector3D(0, 0, -1),
             )
-        elif mode == 5:
-            # ukośny kawaleryjski
-            k = 1
-            alpha = math.pi / 4
-            self.projectionMatrix.setColumn(
-                2, QtGui.QVector4D(k * math.cos(alpha), k * math.sin(alpha), 0, 0)
-            )
-            self.projectionMatrix.translate(0.5, 0.5, 0)
-            self.modelViewMatrix.lookAt(
-                QtGui.QVector3D(1, 1, 0),
-                QtGui.QVector3D(0, 0, 0),
-                QtGui.QVector3D(0, 0, -1),
-            )
-        elif mode == 6:
+        elif self.mode == 6:
             # izometryczny
-            setOrho()
             self.modelViewMatrix.lookAt(
                 QtGui.QVector3D(2, 2, 2 * math.sqrt(2 / 3)),
                 QtGui.QVector3D(0, 0, 0),
@@ -150,6 +152,8 @@ class RenderingPane(QtWidgets.QWidget):
 
     def paintEvent(self, _event):
         painter = QtGui.QPainter(self)
+        self.calculateProjectionMatrix()
+        self.calculateModelViewMatrix()
         self.drawAxis(painter)
         for vertex in model:
             self.drawVertex(painter, *vertex)
@@ -166,9 +170,9 @@ class RenderingPane(QtWidgets.QWidget):
         pen.setColor(color)
         painter.setPen(pen)
 
-        proj_a = a.project(self.modelViewMatrix, self.projectionMatrix, self.rect())
-        proj_b = b.project(self.modelViewMatrix, self.projectionMatrix, self.rect())
-        painter.drawLine(proj_a.toPoint(), proj_b.toPoint())
+        a = a.project(self.modelViewMatrix, self.projectionMatrix, self.rect())
+        b = b.project(self.modelViewMatrix, self.projectionMatrix, self.rect())
+        painter.drawLine(a.toPoint(), b.toPoint())
 
     def drawAxis(self, painter: QtGui.QPainter):
         for vec, color in (
@@ -266,7 +270,11 @@ if __name__ == "__main__":
     translateSlidersGroup.setLayout(translateSlidersGroupLayout)
     transformationsPanelLayout.addWidget(translateSlidersGroup)
 
-    vectorAxes = {"X": QtGui.QVector3D.setX, "Y": QtGui.QVector3D.setY, "Z": QtGui.QVector3D.setZ}
+    vectorAxes = {
+        "X": QtGui.QVector3D.setX,
+        "Y": QtGui.QVector3D.setY,
+        "Z": QtGui.QVector3D.setZ,
+    }
 
     for axis, setter in vectorAxes.items():
         slider = TransformationSlider(axis)
@@ -281,8 +289,8 @@ if __name__ == "__main__":
     rotationDialsGroup.setLayout(rotationDialsGroupLayout)
     transformationsPanelLayout.addWidget(rotationDialsGroup)
 
-    for name, setter in vectorAxes.items():
-        dial = AngleDial(name)
+    for axis, setter in vectorAxes.items():
+        dial = AngleDial(axis)
         dial.dial.valueChanged.connect(lambda v: setter(model.rotation, v))
         dial.dial.valueChanged.connect(lambda _: window.renderingPane.update())
         rotationDialsGroupLayout.addWidget(dial)
@@ -292,8 +300,8 @@ if __name__ == "__main__":
     scaleSlidersGroup.setLayout(scaleSlidersGroupLayout)
     transformationsPanelLayout.addWidget(scaleSlidersGroup)
 
-    for name, setter in vectorAxes.items():
-        slider = TransformationSlider(name)
+    for axis, setter in vectorAxes.items():
+        slider = TransformationSlider(axis)
         slider.slider.setMinimum(1)
         slider.slider.setMaximum(5)
         slider.slider.valueChanged.connect(lambda v: setter(model.scale, v))
